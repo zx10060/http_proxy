@@ -1,0 +1,6 @@
+.vscode
+.gitignore
+.idea
+venv
+Lib
+Scripts
