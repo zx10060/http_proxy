@@ -30,7 +30,7 @@ def edit_page(response):
 def get_data(url, params):
     """
     Pull data from url, handling exceptions, call edit page or return error page
-    :param url: with \http:// or \https://
+    :param url: with http:// or https://
     :param params: use for add params to url
     :return: modify url page or error page
     """
