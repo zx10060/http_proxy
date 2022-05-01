@@ -17,9 +17,11 @@ def edit_page(response):
     """
     data = response.content
     if response.text[:5] == '<html':
-        data = re.sub(r'<a href="http[s]*://', '<a href="http://127.0.0.1:8000/', response.text)
-        replicate = lambda match: match.group(0)[:-1] + '™' + match.group(0)[-1:]
-        pattern = re.compile(r'[>| |\n][a-zA-Z]{6}[ |<|\n]')
+        data = re.sub(r'<a href=\"https*://', '<a href="http://127.0.0.1:8000/', response.text)
+
+        def replicate(match):
+            return match.group(0)[:-1] + '™' + match.group(0)[-1:]
+        pattern = re.compile(r'[>\s\n][a-zA-Z]{6}[\s<\n]')
         data = re.sub(pattern, replicate, data)
         data.encode(encoding='utf-8')
     return data
