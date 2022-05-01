@@ -50,7 +50,7 @@ def get_data(url, params):
 @app.route("/<path:url>", methods=["GET", "POST"])
 def proxy(url):
     """
-    If url not start from \http:// or \https://, first time add to url \http://
+    If url not start from http:// or https://, first time add to url http://
     params - calling from flask request, and get dict of user input url params
     :param url: any url
     :return: modify page with ™ and other links
