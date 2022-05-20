@@ -9,11 +9,11 @@ class TestStringMethods(unittest.TestCase):
 
     def test_replace_links(self):
         data = '''
-            < a href = "https://news.ycombinator.com/item?id=13719368" rel = "nofollow" > 
+            < a href = "https://news.ycombinator.com/item?id=13719368" rel = "nofollow" >
                 https://news.ycombinator.com&/item?id=13719368</a>
             '''
         equals_data = '''
-            <a href="http://127.0.0.1:8000/news.ycombinator.com/item?id=13719368" rel = "nofollow" > 
+            <a href="http://127.0.0.1:8000/news.ycombinator.com/item?id=13719368" rel = "nofollow" >
                 https://news.ycombinator.com&/item?id=13719368</a>
             '''
         data = modify_links(data)
