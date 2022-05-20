@@ -7,22 +7,30 @@ import re
 app = Flask(__name__)
 
 
+def modify_links(data: str) -> str:
+    data = re.sub(r"<[\s*]a[\s*]href[\s*]=[\s*]\"https:\/\/", "<a href=\"http://127.0.0.1:8000/", data)
+    return data
+
+
+def add_tm(data: str) -> str:
+    pattern = re.compile(r"(\b|\s)([a-zA-Z]{6})(\b|\s)")
+    data = re.sub(pattern, lambda match: match.group(0) + "™", data)
+    return data
+
+
 def edit_page(response) -> bytearray:
     """
-    Read response, modify (add ™ after ich word from six letters
-    and modify links for navigate to other pages)
-    and encode UTF-8 for return
+    Read response,
+     modify links for navigate to other pages,
+     add ™ after ich word from six letters,
+     encode UTF-8 for return
     :param response: object from url
     :return: html page UTF-8
     """
     data = response.content
     if response.headers['content-type'].split(";")[0] == "text/html":
-        data = re.sub(r"<a href=\"https*://", "<a href=\"http://127.0.0.1:8000/", response.text)
-
-        def replicate(match):
-            return match.group(0) + "™"
-        pattern = re.compile(r"(\b|\s)([a-zA-Z]{6})(\b|\s)")
-        data = re.sub(pattern, replicate, data)
+        data = modify_links(response.text)
+        data = add_tm(data)
         data.encode(encoding="utf-8")
     return data
 
