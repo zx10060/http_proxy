@@ -7,7 +7,7 @@ import re
 app = Flask(__name__)
 
 
-def edit_page(response):
+def edit_page(response) -> bytearray:
     """
     Read response, modify (add ™ after ich word from six letters
     and modify links for navigate to other pages)
@@ -16,39 +16,34 @@ def edit_page(response):
     :return: html page UTF-8
     """
     data = response.content
-    if response.text[:5] == "<html":
+    if response.headers['content-type'].split(";")[0] == "text/html":
         data = re.sub(r"<a href=\"https*://", "<a href=\"http://127.0.0.1:8000/", response.text)
 
         def replicate(match):
-            return match.group(0)[:-1] + "™" + match.group(0)[-1:]
-        pattern = re.compile(r"[>\s\n][a-zA-Z]{6}[\s<\n]")
+            return match.group(0) + "™"
+        pattern = re.compile(r"(\b|\s)([a-zA-Z]{6})(\b|\s)")
         data = re.sub(pattern, replicate, data)
         data.encode(encoding="utf-8")
     return data
 
 
-def get_data(url, params):
+def get_data(url: str, params: dict) -> render_template:
     """
     Pull data from url, handling exceptions, call edit page or return error page
     :param url: with http:// or https://
     :param params: use for add params to url
     :return: modify url page or error page
     """
-    headers = {
-        "User-Agent": "Mozilla/5.0 Mozilla / 5.0(Windows NT 10.0; Win64; x64; rv: 99.0) "
-                      "Gecko / 20100101 Firefox / 99.0;",
-        "Host": url.split("/")[2]
-    }
+    headers = request.headers
     try:
         response = requests.get(url, headers=headers, params=params)
+        return edit_page(response)
     except ConnectionError or HTTPError or Timeout or SSLError or ProxyError as e:
         return render_template("error.html", url=url, error=e)
-    else:
-        return edit_page(response)
 
 
 @app.route("/<path:url>", methods=["GET", "POST"])
-def proxy(url):
+def proxy(url: str):
     """
     If url not start from http:// or https://, first time add to url http://
     params - calling from flask request, and get dict of user input url params
@@ -62,7 +57,7 @@ def proxy(url):
 
 
 @app.route("/", methods=["GET", "POST"])
-def index():
+def index() -> render_template:
     """
     Its render of main page
     :return: main page index.html
